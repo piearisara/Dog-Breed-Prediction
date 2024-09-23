@@ -1,105 +1,69 @@
-# Dog-Breed-Prediction
-[//]: # (Image References)
-
-[image1]: ./images/sample_dog_output.png "Sample Output"
-[image2]: ./images/vgg16_model.png "VGG-16 Model Keras Layers"
-[image3]: ./images/vgg16_model_draw.png "VGG16 Model Figure"
-
+# Dog Breed Prediction
 
 ## Project Overview
 
-Welcome to the Convolutional Neural Networks (CNN) project in the AI Nanodegree! In this project, you will learn how to build a pipeline that can be used within a web or mobile app to process real-world, user-supplied images.  Given an image of a dog, your algorithm will identify an estimate of the canine’s breed.  If supplied an image of a human, the code will identify the resembling dog breed.  
+The objective is to develop an algorithm that classifies images of dogs by their breed which uses CNN. The model was trained from scratch and with transfer learning.
 
-![Sample Output][image1]
+## Table of Contents
 
-Along with exploring state-of-the-art CNN models for classification, you will make important design decisions about the user experience for your app.  Our goal is that by completing this lab, you understand the challenges involved in piecing together a series of models designed to perform various tasks in a data processing pipeline.  Each model has its strengths and weaknesses, and engineering a real-world application often involves solving many problems without a perfect answer.  Your imperfect solution will nonetheless create a fun user experience!
+- [Project Overview](#project-overview)
+- [Installation](#installation)
+- [Requirements](#requirements)
+- [Step-by-Step](#step-by-step)
+  - [Step 0: Import Datasets](#step-0-import-datasets)
+  - [Step 1: Detect Humans](#step-1-detect-humans)
+  - [Step 2: Detect Dogs](#step-2-detect-dogs)
+  - [Step 3: Create a CNN to Classify Dog Breeds](#step-3-create-a-cnn-to-classify-dog-breeds)
+  - [Step 4: Use Transfer Learning to Classify Dog Breeds](#step-4-use-transfer-learning-to-classify-dog-breeds)
+  - [Step 5: Build and Test the Final Model](#step-5-build-and-test-the-final-model)
+## Installation
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/piearisara/Dog-Breed-Prediction
+   cd Dog-Breed-Prediction
+   
+## Requirements
 
-## Project Instructions
+To run this project, the following libraries are required:
 
-### Instructions
+- Python 3.x
+- Keras
+- TensorFlow
+- NumPy
+- OpenCV
+- scikit-learn
+- Matplotlib
+- tqdm
 
-1. Clone the repository and navigate to the downloaded folder.
-```	
-git clone https://github.com/udacity/dog-project.git
-cd dog-project
-```
 
-2. Download the [dog dataset](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip).  Unzip the folder and place it in the repo, at location `path/to/dog-project/dogImages`. 
+   
+## Step-by-Step
 
-3. Download the [human dataset](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/lfw.zip).  Unzip the folder and place it in the repo, at location `path/to/dog-project/lfw`.  If you are using a Windows machine, you are encouraged to use [7zip](http://www.7-zip.org/) to extract the folder. 
+### Step 0: Import Datasets
 
-4. Donwload the [VGG-16 bottleneck features](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/DogVGG16Data.npz) for the dog dataset.  Place it in the repo, at location `path/to/dog-project/bottleneck_features`.
+We begin by loading the dog and human datasets. The dog dataset contains images of various dog breeds, and we use it to train and validate our models.
 
-5. (Optional) __If you plan to install TensorFlow with GPU support on your local machine__, follow [the guide](https://www.tensorflow.org/install/) to install the necessary NVIDIA software on your system.  If you are using an EC2 GPU instance, you can skip this step.
+- **Dog Dataset:** Consists of images from 133 different dog breeds.
+- **Human Dataset:** Used to test human face detection.
 
-6. (Optional) **If you are running the project on your local machine (and not using AWS)**, create (and activate) a new environment.
+### Step 1: Detect Humans
 
-	- __Linux__ (to install with __GPU support__, change `requirements/dog-linux.yml` to `requirements/dog-linux-gpu.yml`): 
-	```
-	conda env create -f requirements/dog-linux.yml
-	source activate dog-project
-	```  
-	- __Mac__ (to install with __GPU support__, change `requirements/dog-mac.yml` to `requirements/dog-mac-gpu.yml`): 
-	```
-	conda env create -f requirements/dog-mac.yml
-	source activate dog-project
-	```  
-	**NOTE:** Some Mac users may need to install a different version of OpenCV
-	```
-	conda install --channel https://conda.anaconda.org/menpo opencv3
-	```
-	- __Windows__ (to install with __GPU support__, change `requirements/dog-windows.yml` to `requirements/dog-windows-gpu.yml`):  
-	```
-	conda env create -f requirements/dog-windows.yml
-	activate dog-project
-	```
+In this step, we use OpenCV's Haar feature-based cascade classifiers to detect human faces in images. If a human is detected, it will return `True`.
 
-7. (Optional) **If you are running the project on your local machine (and not using AWS)** and Step 6 throws errors, try this __alternative__ step to create your environment.
+### Step 2: Detect Dogs
 
-	- __Linux__ or __Mac__ (to install with __GPU support__, change `requirements/requirements.txt` to `requirements/requirements-gpu.txt`): 
-	```
-	conda create --name dog-project python=3.5
-	source activate dog-project
-	pip install -r requirements/requirements.txt
-	```
-	**NOTE:** Some Mac users may need to install a different version of OpenCV
-	```
-	conda install --channel https://conda.anaconda.org/menpo opencv3
-	```
-	- __Windows__ (to install with __GPU support__, change `requirements/requirements.txt` to `requirements/requirements-gpu.txt`):  
-	```
-	conda create --name dog-project python=3.5
-	activate dog-project
-	pip install -r requirements/requirements.txt
-	```
-	
-8. (Optional) **If you are using AWS**, install Tensorflow.
-```
-sudo python3 -m pip install -r requirements/requirements-gpu.txt
-```
-	
-9. Switch [Keras backend](https://keras.io/backend/) to TensorFlow.
-	- __Linux__ or __Mac__: 
-		```
-		KERAS_BACKEND=tensorflow python -c "from keras import backend"
-		```
-	- __Windows__: 
-		```
-		set KERAS_BACKEND=tensorflow
-		python -c "from keras import backend"
-		```
+We utilize the ResNet-50 model pre-trained on the ImageNet dataset to detect if a dog is present in an image. If a dog is detected, it will return `True`.
 
-10. (Optional) **If you are running the project on your local machine (and not using AWS)**, create an [IPython kernel](http://ipython.readthedocs.io/en/stable/install/kernel_install.html) for the `dog-project` environment. 
-```
-python -m ipykernel install --user --name dog-project --display-name "dog-project"
-```
+### Step 3: Create a CNN to Classify Dog Breeds
 
-11. Open the notebook.
-```
-jupyter notebook dog_app.ipynb
-```
+We train a CNN from scratch to classify dog breeds. The architecture includes several convolutional and pooling layers followed by a fully connected softmax layer to classify the image into one of 133 dog breeds.
 
-12. (Optional) **If you are running the project on your local machine (and not using AWS)**, before running code, change the kernel to match the dog-project environment by using the drop-down menu (**Kernel > Change kernel > dog-project**). Then, follow the instructions in the notebook.
+### Step 4: Use Transfer Learning to Classify Dog Breeds
 
-__NOTE:__ While some code has already been implemented to get you started, you will need to implement additional functionality to successfully answer all of the questions included in the notebook. __Unless requested, do not modify code that has already been included.__
+To improve accuracy and reduce training time, we leverage transfer learning by using pre-trained models such as ResNet-50, VGG-16, and others. These models act as fixed feature extractors for the dog breed classification.
+
+### Step 5: Build and Test the Final Model
+
+The final model is built using transfer learning and achieves high accuracy on the dog breed classification task. We test this model on unseen dog images to evaluate its performance.
+
 
