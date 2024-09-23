@@ -2,7 +2,8 @@
 
 ## Project Overview
 
-The objective is to develop an algorithm that classifies images of dogs by their breed which uses CNN. The model was trained from scratch and with transfer learning.
+The objective is to develop an algorithm that classifies images of dogs by their breed which uses CNN. The model was trained from scratch and with transfer learning. Here is what it will look like:
+[images/demo.jpg]
 
 ## Table of Contents
 
@@ -52,18 +53,18 @@ In this step, we use OpenCV's Haar feature-based cascade classifiers to detect h
 
 ### Step 2: Detect Dogs
 
-We utilize the ResNet-50 model pre-trained on the ImageNet dataset to detect if a dog is present in an image. If a dog is detected, it will return `True`.
+We use the ResNet-50 model pre-trained to detect if a dog is present in an image. If a dog is detected, it will return `True`.
 
 ### Step 3: Create a CNN to Classify Dog Breeds
 
-We train a CNN from scratch to classify dog breeds. The architecture includes several convolutional and pooling layers followed by a fully connected softmax layer to classify the image into one of 133 dog breeds.
+We train a CNN from scratch to classify dog breeds. The architecture includes basic building blocks of CNN to classify the image into one of 133 dog breeds.
 
 ### Step 4: Use Transfer Learning to Classify Dog Breeds
 
-To improve accuracy and reduce training time, we leverage transfer learning by using pre-trained models such as ResNet-50, VGG-16, and others. These models act as fixed feature extractors for the dog breed classification.
+To improve the generalization on limited data, we leverage encoder such as ResNet-50, VGG-16, and others. 
 
 ### Step 5: Build and Test the Final Model
 
-The final model is built using transfer learning and achieves high accuracy on the dog breed classification task. We test this model on unseen dog images to evaluate its performance.
+The final model is built using transfer learning and achieves high accuracy on the dog breed classification task. We test this model on images to evaluate its performance.
 
 
